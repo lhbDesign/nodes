@@ -1,0 +1,16 @@
+{
+  "name": "nodes",
+  "version": "1.0.0",
+  "description": "",
+  "main": "方法重构.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitee.com/li-haibo-1992/notes.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

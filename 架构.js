@@ -18,3 +18,39 @@ module.exports = {
     return url
   })
 }
+
+// CSR 应用的 Babel 编译流程， 业务方使用代码： webpack.config.js
+module.exports={
+  presets:['@lucas/babel-preset/app']
+}
+//相关 wepack 配置
+module.exports = {
+  module:{
+    rules:[
+      {
+        test:/\.js$/, // 对于js文件，使用以下其中的一种方式进行编译，这里对 依赖 和应用 进行和区分
+        oneOf:[
+          { // 此处用于编译 非依赖
+            exclude:/node_modules/,
+            loader:'babel-loader',
+            options:{
+              cacheDirectory:true, // 开启缓存
+            }
+          },
+          {
+            loader:'babel-loader',
+            options:{
+              cacheDirectory:true,
+              configFile:false,
+              presets:['@lucas/bable-preset/dependencies'],
+              compact:false
+            }
+          }
+        ]
+      },
+    ]
+  }
+}
+
+
+
