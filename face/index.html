@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>面试精选</title>
+</head>
+<body>
+  <script>
+    // 数组返回值 ， 数组空位
+    // vue 生命周期 vue 组件通信  vue2 和 vue3 
+    // 请优化以下方法
+    function vomels(str){
+      var res;
+      if(str){
+        // 提取所有
+        res = str.match(/[aeiou]/g);
+        if(res){
+          return res
+        }
+      }
+    }
+    function vomels(str){
+      var res;
+      if(str && (res = str.match(/[aeiou]/g))){
+          return res
+      }
+    }
+    console.log(vomels('Hello World'));
+    // 等同于
+
+    var  a = {s:1}
+    console.log(a);
+    a.s = 2
+    console.log(a);
+
+  </script>
+</body>
+</html>
