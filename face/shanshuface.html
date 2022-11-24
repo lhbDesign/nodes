@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset='UTF-8'>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>面试题</title>
+  <style>
+    .box {
+      width: 200px;
+      height: 200px;
+      border: 1px solid #333;
+      overflow: hidden;
+    }
+
+    .warp {
+      width: 0;
+      height: 0;
+      border: 50px solid;
+      border-color: transparent transparent black transparent;
+      transform: translateX(-50px) translateY(-80px);
+      position: relative;
+      left: 0;
+    }
+
+    .box:hover .warp {
+      left: 200px;
+      transition-duration: 2s;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="box">
+    <div class="warp"></div>
+  </div>
+  <ul>
+    <li>1</li>
+    <li>1</li>
+    <li>2</li>
+    <li>4</li>
+  </ul>
+  <button>Add</button>
+  <script type="text/javascript">
+    const btn = document.getElementsByTagName('button')[0]
+    const ulBox = document.getElementsByTagName('ul')[0]
+    btn.addEventListener('click',()=>{
+      const arr = Array.from(ulBox.children).map((item)=>{
+        return Number(item.textContent) 
+      })
+      let li = document.createElement('li')
+      li.innerText = arr.reduce((prev,item)=>{
+        return prev += item
+      },0)
+      ulBox.appendChild(li)
+    })
+    
+    function shanshu(){
+      this.log = () => { console.log(1);}
+      log = () => { console.log(2);}
+      return this
+    }
+    var obj = {
+      log:() => {console.log(3);}
+    }
+    shanshu.log = () => {console.log(4);}
+    shanshu.prototype = obj;
+    shanshu.__proto__ = obj;
+    var log = () => {console.log(5);}
+    function log(){
+      console.log(6);
+    }
+    shanshu.log();  // 执行对象上的方法
+    log(); // 执行 log 5 , log 6 的变量提升 被 var 覆盖
+    shanshu().log(); // 执行函数， 拿到 this, 这里的 this 是 window， 因为不是 构造函数 也没有拿到实例对象， shanshu 函数在执行的时候， log 会从写 window 上的 log
+    log(); // window 上的 this 已经被从写
+    new shanshu().log(); // new shanshu 的时候 得到的是一个构造函数， new shanshu()  拿到的 是一个实例对象，不是 window， 里面会是 log 1， log 2 没有 var， 从写的还是 window 上的 this
+     // 4 5 2 2 1
+
+    setTimeout(()=>{console.log(1);},0)
+    asyncFn();
+    const promise = new Promise((res,rej)=>{
+      console.log(2);
+      rej()
+    }).then(console.log.bind(null,3),console.log.bind(null,4)).catch(console.log.bind(null,5));
+    async function asyncFn(){
+      const res1 = await 6;
+      console.log(res1);
+      const res2 = await new Promise((res,rej)=>{
+        console.log(7);
+      })
+      console.log(8);
+    }
+    console.log(9);
+    // 2 9 6 7 4 1
+
+    // 实现深拷贝
+    //1 递归
+    function deepCopy(o2, o1) {
+      if(o2 === undefined) o2 = { }
+      for (let k in o1) {
+        if (Object.prototype.toString.call(o1[k]) === '[object Object]') {
+          o2[k] = { }
+          deepCopy(o2[k], o1[k])
+        } else if (Object.prototype.toString.call(o1[k]) === '[object Array]') {
+          o2[k] = [ ]
+          deepCopy(o2[k], o1[k])
+        } else {
+          o2[k] = o1[k]
+        }
+      }
+      return o2
+    }
+    //2  不能复制 正则,函数,不可枚举属性等除了简单数据类型和数组,对象,以外的东西
+    const o2 = JSON.parse(JSON.stringify(o1))
+    // 较完整实现
+    function cloneDeep(origin,target){
+      if(target === undefined){
+        if(Node.prototype.isPrototypeOf(origin)){
+          target = document.createElement(origin.nodeName)
+          target.style = origin.style.cssText
+        }else if(origin.constructor === Uint16Array){
+          target === new origin.constructor(Array.from(origin))
+        }else if(origin.constructor === Date || origin.constructor === RegExp || origin.constructor === Map || origin.constructor === Set){
+          target === new origin.constructor(origin)
+        }else if(origin.constructor === Function){
+          let args = origin.toString().match(/\((.*?)\)/)[1]
+          let content = origin.toString().replace(/\n|\r/g,'').match(/\{(.*)\}/)[1]
+          target = new Function(args,content)
+        }else{
+          target = new origin.constructor()
+        }
+      }
+      let names = Reflect.ownKeys(origin)
+      for(let i = 0 ; i < names.length ; i++){
+        if(names[i] === 'constructor'){ Object.defineProperty(target,'contructor',{value:target}); continue }
+        let desc = Object.getOwnPropertyDescriptor(origin,names[i])
+        if((typeof desc.value === 'object' && desc.value !== null) || typeof desc.value === 'function'){
+          let o = cloneDeep(desc.value)
+          Object.defineProperty(target,names[i],{
+            value:o,
+            enumerable:desc.enumerable,
+            writable:desc.writable,
+            configurable:desc.configurable
+          })
+        }else{
+          Object.defineProperty(target,names[i],desc)
+        }
+      }
+      return target
+    }
+
+    // 实现继承
+    // 原型继承
+    //继承方法1
+    for(let funcName in CreateObj.prototype){
+        Work.prototype[funcName] = CreateObj.prototype[funcName]
+    }
+    //继承方法2
+    Work.prototype = Object.create(CreateObj.prototype)
+    //继承方法3
+    Work.prototype = new CreateObj()
+
+    // 组合 继承
+    Object.defineProperty(Function.prototype,'extends',{
+    value(superClass){
+      function F(){}
+      F.prototype = superClass.prototype
+      if(superClass.prototype.constructor !== superClass) Object.defineProperty(superClass.prototype,'constructor',{value:superClass})
+      let proto = this.prototype
+      this.prototype = new F()
+      let names = Reflect.ownKeys(proto)
+      for(let i = 0 ; i < names.length ; i++){
+        let desc = Object.getOwnPropertyDescriptor(proto,names[i])
+        Object.defineProperty(this.prototype,names[i],desc)
+      }
+      this.prototype.super = function(arguments){ superClass.apply(this,arguments) }
+      this.prototype.supers = superClass.prototype
+    }
+  })
+  </script>
+</body>
+
+</html>
